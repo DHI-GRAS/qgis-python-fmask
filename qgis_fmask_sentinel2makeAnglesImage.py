@@ -8,6 +8,7 @@
 from argparse import Namespace
 import sys
 import os.path
+import numpy as np
 
 here = os.path.dirname(scriptDescriptionFile)
 if here not in sys.path:
@@ -19,4 +20,5 @@ cmdargs = Namespace(
         infile=infile,
         outfile=outfile)
 
-mainRoutine(cmdargs)
+with np.errstate(invalid='ignore'):
+    mainRoutine(cmdargs)

@@ -2,8 +2,8 @@
 #==================================
 ##FMask=group
 ##Sentinel 2 Stacked=name
-##ParameterFile|granulesdir|Directory of target granule|True|False
-##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|False|
+##ParameterFile|granuledir|Directory of target granule|True|False
+##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|True|
 ##OutputFile|output|Output cloud mask|tif
 ##*ParameterBoolean|verbose|verbose output|True
 ##*ParameterBoolean|keepintermediates|Keep intermediate temporary files (normally deleted)|False
@@ -28,29 +28,43 @@ if here not in sys.path:
 
 from stacks.sentinel_stack import create_sentinel_stack
 from interfaces.fmask_sentinel2Stacked import mainRoutine
+from interfaces.fmask_sentinel2makeAnglesImage import mainRoutine as mainRoutine_angles
 from interfaces.redirect_print import redirect_print
-
-cmdargs = Namespace(
-        anglesfile=anglesfile,
-        output=output,
-        verbose=verbose,
-        keepintermediates=keepintermediates,
-        tempdir=tempdir,
-        mincloudsize=mincloudsize,
-        cloudbufferdistance=cloudbufferdistance,
-        shadowbufferdistance=shadowbufferdistance,
-        cloudprobthreshold=cloudprobthreshold,
-        nirsnowthreshold=nirsnowthreshold,
-        greensnowthreshold=greensnowthreshold)
+from interfaces.s2meta import find_xml_in_granule_dir
 
 
 tempdir = tempfile.mkdtemp()
 try:
     progress.setConsoleInfo('Creating Sentinel 2 band stack VRT file ...')
     tempvrt = os.path.join(tempdir, 'temp.vrt')
-    create_sentinel_stack(granulesdir, outfile=tempvrt)
+    create_sentinel_stack(granuledir, outfile=tempvrt)
     progress.setConsoleInfo('Done.')
-    cmdargs.toa = tempvrt
+
+    if not anglesfile:
+        progress.setConsoleInfo('Creating angles file ...')
+        anglesfile = os.path.join(tempdir, 'angles.img')
+        cmdargs_angles = Namespace(
+                infile=find_xml_in_granule_dir(granuledir),
+                outfile=anglesfile)
+        import numpy as np
+        with np.errstate(invalid='ignore'):
+            mainRoutine_angles(cmdargs_angles)
+        progress.setConsoleInfo('Done.')
+
+    cmdargs = Namespace(
+            toa=tempvrt,
+            anglesfile=anglesfile,
+            output=output,
+            verbose=verbose,
+            keepintermediates=keepintermediates,
+            tempdir=tempdir,
+            mincloudsize=mincloudsize,
+            cloudbufferdistance=cloudbufferdistance,
+            shadowbufferdistance=shadowbufferdistance,
+            cloudprobthreshold=cloudprobthreshold,
+            nirsnowthreshold=nirsnowthreshold,
+            greensnowthreshold=greensnowthreshold)
+
     progress.setConsoleInfo('Running FMask (this may take a while) ...')
     with redirect_print(progress):
         mainRoutine(cmdargs)
