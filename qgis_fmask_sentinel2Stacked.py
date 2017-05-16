@@ -1,13 +1,11 @@
 #Definition of inputs and outputs
 #==================================
 ##FMask=group
-##Sentinel 2 Stacked=name
+##FMask Sentinel 2=name
 ##ParameterFile|granuledir|Directory of target granule|True|False
 ##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|True|
 ##OutputFile|output|Output cloud mask|tif
 ##*ParameterBoolean|verbose|verbose output|True
-##*ParameterBoolean|keepintermediates|Keep intermediate temporary files (normally deleted)|False
-##*ParameterFile|tempdir|Temp directory to use (default: same as infile)|True|True
 ##ParameterNumber|mincloudsize|Mininum cloud size (in pixels) to retain, before any buffering|0|None|0
 ##ParameterNumber|cloudbufferdistance|Distance (in metres) to buffer final cloud objects|0|None|150
 ##ParameterNumber|shadowbufferdistance|Distance (in metres) to buffer final cloud shadow objects|0|None|300
@@ -56,8 +54,8 @@ try:
             anglesfile=anglesfile,
             output=output,
             verbose=verbose,
-            keepintermediates=keepintermediates,
             tempdir=tempdir,
+            keepintermediates=False,
             mincloudsize=mincloudsize,
             cloudbufferdistance=cloudbufferdistance,
             shadowbufferdistance=shadowbufferdistance,

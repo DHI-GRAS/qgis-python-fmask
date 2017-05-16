@@ -18,36 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 from __future__ import print_function, division
 
-import sys
-import argparse
 from fmask import landsatTOA
 
-def getCmdargs():
-    """
-    Get command line arguments
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--infile', help='Input raw DN radiance image')
-    parser.add_argument('-m', '--mtl', help='.MTL  file')
-    parser.add_argument("-z", "--anglesfile", 
-        help="Image of sun and satellite angles (see fmask_usgsLandsatMakeAnglesImage.py)")
-    parser.add_argument('-o', '--output', help='Output TOA reflectance file')
 
-    cmdargs = parser.parse_args()
-
-    if (cmdargs.infile is None or cmdargs.mtl is None or  
-            cmdargs.output is None or cmdargs.anglesfile is None):
-        parser.print_help()
-        sys.exit()
-    return cmdargs
-
-
-def mainRoutine():
-    cmdargs = getCmdargs()
-    
+def mainRoutine(cmdargs):
     landsatTOA.makeTOAReflectance(cmdargs.infile, cmdargs.mtl, cmdargs.anglesfile, cmdargs.output)
-    
-if __name__ == '__main__':
-    mainRoutine()
-    
-    
