@@ -3,7 +3,7 @@
 ##FMask=group
 ##Landsat TOA=name
 ##ParameterFile|infile|Input raw DN radiance image|False|False
-##ParameterFile|mtl|.MTL file|False|False|MTL
+##ParameterFile|mtl|MTL file|False|False|txt
 ##OutputFile|outfile|Output angles image file|tif
 
 from argparse import Namespace

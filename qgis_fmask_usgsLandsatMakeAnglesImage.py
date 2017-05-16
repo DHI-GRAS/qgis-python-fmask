@@ -2,7 +2,7 @@
 #==================================
 ##FMask=group
 ##Landsat Make Angles Image=name
-##ParameterFile|mtl|.MTL file|False|False|MTL
+##ParameterFile|mtl|MTL file|False|False|txt
 ##ParameterFile|templateimg|Image file name to use as template for output angles image|False|False|TIF
 ##OutputFile|outfile|Output angles image file|tif
 

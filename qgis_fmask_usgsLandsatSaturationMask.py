@@ -3,7 +3,7 @@
 ##FMask=group
 ##Landsat Saturation Mask=name
 ##ParameterFile|infile|Input raw DN radiance image|False|False
-##ParameterFile|mtl|.MTL file|False|False|MTL
+##ParameterFile|mtl|MTL file|False|False|txt
 ##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|True|
 ##OutputFile|outfile|Output angles image file|tif
 
