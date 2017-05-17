@@ -1,7 +1,7 @@
 #Definition of inputs and outputs
 #==================================
 ##FMask=group
-##FMask Landsat=name
+##FMask Landsat 8=name
 ##ParameterFile|productdir|Directory of Landsat product|True|False
 ##OutputFile|saturationfile|Saturation mask file. If not existing, will be created in this location
 ##OutputFile|toafile|TOA file. If not existing, will be created in this location
