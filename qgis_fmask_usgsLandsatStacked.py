@@ -1,10 +1,12 @@
 #Definition of inputs and outputs
 #==================================
 ##FMask=group
-##FMask Landsat 8=name
+##FMask Landsat=name
 ##ParameterFile|productdir|Directory of Landsat product|True|False
-##OutputFile|saturationfile|Saturation mask file. If not existing, will be created in this location
-##OutputFile|toafile|TOA file. If not existing, will be created in this location
+##ParameterSelection|landsatkeynr|Landsat sensor|Landsat 4&5;Landsat 7;Landsat 8|2
+##OutputFile|anglesfile|Angles file. If not existing, it will be created in this location.
+##OutputFile|saturationfile|Saturation mask file. If not existing, it will be created in this location.
+##OutputFile|toafile|TOA file. If not existing, it will be created in this location.
 ##OutputFile|output|Output cloud mask|tif
 ##ParameterNumber|mincloudsize|Mininum cloud size (in pixels) to retain, before any buffering|0|None|0
 ##ParameterNumber|cloudbufferdistance|Distance (in metres) to buffer final cloud objects|0|None|150
@@ -26,7 +28,7 @@ here = os.path.dirname(scriptDescriptionFile)
 if here not in sys.path:
     sys.path.append(here)
 
-from stacks.landsat_stack import create_landsat_stack
+from stacks.landsat_stack import create_landsat_stacks
 from interfaces.fmask_usgsLandsatStacked import mainRoutine
 from interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine as mainRoutine_angles
 from interfaces.fmask_usgsLandsatSaturationMask import mainRoutine as mainRoutine_saturation
@@ -34,6 +36,7 @@ from interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_toa
 from interfaces.redirect_print import redirect_print
 from interfaces.landsatmeta import find_mtl_in_product_dir
 
+landsatkey = ['4&5', '7', '8'][landsatkeynr]
 
 tempdir = tempfile.mkdtemp()
 try:
@@ -41,22 +44,22 @@ try:
 
     # create band stacks
     progress.setConsoleInfo('Creating band stacks ...')
-    vrtfiles = {}
-    for key in ['ref', 'thermal']:
-        vrtfiles[key] = os.path.join(tempdir, 'temp_{}.vrt'.format(key))
-        create_landsat_stack(productdir, outfile=vrtfiles[key], patternkey=key)
+    outfile_template = os.path.join(tempdir, 'temp_{imagename}.vrt')
+    vrtfiles = create_landsat_stacks(
+            productdir, outfile_template=outfile_template, landsatkey=landsatkey)
     progress.setConsoleInfo('Done.')
 
     # create angles file
-    progress.setConsoleInfo('Creating angles file ...')
-    anglesfile = os.path.join(tempdir, 'angles.img')
-    with np.errstate(invalid='ignore'):
-        mainRoutine_angles(
-                Namespace(
-                    mtl=mtl,
-                    templateimg=vrtfiles['ref'],
-                    outfile=anglesfile))
-    progress.setConsoleInfo('Done.')
+    anglesfile = anglesfile or os.path.join(tempdir, 'angles.img')
+    if not os.path.isfile(anglesfile):
+        progress.setConsoleInfo('Creating angles file ...')
+        with np.errstate(invalid='ignore'):
+            mainRoutine_angles(
+                    Namespace(
+                        mtl=mtl,
+                        templateimg=vrtfiles['ref'],
+                        outfile=anglesfile))
+        progress.setConsoleInfo('Done.')
 
     # create saturation file
     saturationfile = saturationfile or os.path.join(tempdir, 'saturation.img')
