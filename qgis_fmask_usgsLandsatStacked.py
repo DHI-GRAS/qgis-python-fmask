@@ -3,6 +3,8 @@
 ##FMask=group
 ##FMask Landsat=name
 ##ParameterFile|productdir|Directory of Landsat product|True|False
+##OutputFile|saturationfile|Saturation mask file. If not existing, will be created in this location
+##OutputFile|toafile|TOA file. If not existing, will be created in this location
 ##OutputFile|output|Output cloud mask|tif
 ##ParameterNumber|mincloudsize|Mininum cloud size (in pixels) to retain, before any buffering|0|None|0
 ##ParameterNumber|cloudbufferdistance|Distance (in metres) to buffer final cloud objects|0|None|150
@@ -45,16 +47,6 @@ try:
         create_landsat_stack(productdir, outfile=vrtfiles[key], patternkey=key)
     progress.setConsoleInfo('Done.')
 
-    # create saturation file
-    progress.setConsoleInfo('Creating saturation mask file ...')
-    saturationfile = os.path.join(tempdir, 'saturation.img')
-    mainRoutine_saturation(
-            Namespace(
-                infile=vrtfiles['ref'],
-                mtl=mtl,
-                output=saturationfile))
-    progress.setConsoleInfo('Done.')
-
     # create angles file
     progress.setConsoleInfo('Creating angles file ...')
     anglesfile = os.path.join(tempdir, 'angles.img')
@@ -66,16 +58,28 @@ try:
                     outfile=anglesfile))
     progress.setConsoleInfo('Done.')
 
+    # create saturation file
+    saturationfile = saturationfile or os.path.join(tempdir, 'saturation.img')
+    if not os.path.isfile(saturationfile):
+        progress.setConsoleInfo('Creating saturation mask file ...')
+        mainRoutine_saturation(
+                Namespace(
+                    infile=vrtfiles['ref'],
+                    mtl=mtl,
+                    output=saturationfile))
+        progress.setConsoleInfo('Done.')
+
     # create TOA file
-    progress.setConsoleInfo('Creating TOA file ...')
-    toafile = os.path.join(tempdir, 'toa.img')
-    mainRoutine_toa(
-            Namespace(
-                infile=vrtfiles['ref'],
-                mtl=mtl,
-                anglesfile=anglesfile,
-                output=toafile))
-    progress.setConsoleInfo('Done.')
+    toafile = toafile or os.path.join(tempdir, 'toa.img')
+    if not os.path.isfile(toafile):
+        progress.setConsoleInfo('Creating TOA file ...')
+        mainRoutine_toa(
+                Namespace(
+                    infile=vrtfiles['ref'],
+                    mtl=mtl,
+                    anglesfile=anglesfile,
+                    output=toafile))
+        progress.setConsoleInfo('Done.')
 
     cmdargs = Namespace(
             toa=toafile,
