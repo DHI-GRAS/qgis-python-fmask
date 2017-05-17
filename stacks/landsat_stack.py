@@ -14,4 +14,4 @@ def create_landsat_stack(productdir, outfile, patternkey):
     infiles = sorted(glob.glob(pattern))
     if not infiles:
         raise RuntimeError('No files found for pattern \'{}\'.'.format(pattern))
-    buildvrt(infiles, outfile, resolution='user', separate=True)
+    buildvrt(infiles, outfile, separate=True)

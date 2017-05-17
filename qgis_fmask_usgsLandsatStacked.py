@@ -25,9 +25,10 @@ if here not in sys.path:
     sys.path.append(here)
 
 from stacks.landsat_stack import create_landsat_stack
-from interfaces.fmask_sentinel2Stacked import mainRoutine
+from interfaces.fmask_usgsLandsatStacked import mainRoutine
 from interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine as mainRoutine_angles
-from interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_TOA
+from interfaces.fmask_usgsLandsatSaturationMask import mainRoutine as mainRoutine_saturation
+from interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_toa
 from interfaces.redirect_print import redirect_print
 from interfaces.landsatmeta import find_mtl_in_product_dir
 
@@ -47,33 +48,33 @@ try:
     # create saturation file
     progress.setConsoleInfo('Creating saturation mask file ...')
     saturationfile = os.path.join(tempdir, 'saturation.img')
-    mainRoutine_angles(
+    mainRoutine_saturation(
             Namespace(
                 infile=vrtfiles['ref'],
                 mtl=mtl,
-                outfile=saturationfile))
+                output=saturationfile))
     progress.setConsoleInfo('Done.')
 
     # create angles file
     progress.setConsoleInfo('Creating angles file ...')
     anglesfile = os.path.join(tempdir, 'angles.img')
-    cmdargs_angles = Namespace(
-            mtl=mtl,
-            templateimg=vrtfiles['ref'],
-            outfile=anglesfile)
     with np.errstate(invalid='ignore'):
-        mainRoutine_angles(cmdargs_angles)
+        mainRoutine_angles(
+                Namespace(
+                    mtl=mtl,
+                    templateimg=vrtfiles['ref'],
+                    outfile=anglesfile))
     progress.setConsoleInfo('Done.')
 
     # create TOA file
     progress.setConsoleInfo('Creating TOA file ...')
     toafile = os.path.join(tempdir, 'toa.img')
-    mainRoutine_angles(
+    mainRoutine_toa(
             Namespace(
                 infile=vrtfiles['ref'],
                 mtl=mtl,
                 anglesfile=anglesfile,
-                outfile=toafile))
+                output=toafile))
     progress.setConsoleInfo('Done.')
 
     cmdargs = Namespace(
