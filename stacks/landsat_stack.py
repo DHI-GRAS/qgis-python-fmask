@@ -6,8 +6,8 @@ from .buildvrt import buildvrt
 
 bandfile_patterns = {
         '8': {
-            'ref': 'LC8*_B[1-7,9].TIF',
-            'thermal': 'LC8*_B1[0,1].TIF'},
+            'ref': 'LC*_B[1-7,9].TIF',
+            'thermal': 'LC*_B1[0,1].TIF'},
         '4&5': {
             'ref': 'L*_B[1,2,3,4,5,7].TIF',
             'thermal': 'L*_B6.TIF'},
