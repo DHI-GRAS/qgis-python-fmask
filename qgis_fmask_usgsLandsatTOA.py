@@ -4,8 +4,8 @@
 ##Landsat Top Of Atmosphere=name
 ##ParameterFile|productdir|Directory of Landsat product|True|False
 ##ParameterSelection|landsatkeynr|Landsat sensor|Landsat 4&5;Landsat 7;Landsat 8|2
-##OutputFile|anglesfile|Angles file. If not existing, it will be created in this location.
-##OutputFile|outfile|Output angles image file|tif
+##*OutputFile|anglesfile|Angles file. If not existing, it will be created in this location.
+##OutputFile|outfile|Output TOA file|tif
 
 from argparse import Namespace
 import sys
