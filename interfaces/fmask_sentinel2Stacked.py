@@ -68,11 +68,12 @@ def mainRoutine(cmdargs):
     fmaskFilenames = config.FmaskFilenames()
     fmaskFilenames.setTOAReflectanceFile(cmdargs.toa)
     fmaskFilenames.setOutputCloudMaskFile(cmdargs.output)
+    #fmaskFilenames.setOutputCloudMaskFile(out)
 
     fmaskConfig = config.FmaskConfig(config.FMASK_SENTINEL2)
     fmaskConfig.setAnglesInfo(anglesInfo)
     fmaskConfig.setKeepIntermediates(cmdargs.keepintermediates)
-    fmaskConfig.setVerbose(cmdargs.verbose)
+    #fmaskConfig.setVerbose(cmdargs.verbose)
     fmaskConfig.setTempDir(cmdargs.tempdir)
     fmaskConfig.setTOARefScaling(10000.0)
     fmaskConfig.setMinCloudSize(cmdargs.mincloudsize)

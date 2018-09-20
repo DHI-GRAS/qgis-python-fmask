@@ -2,10 +2,8 @@
 #==================================
 ##FMask=group
 ##FMask Sentinel 2=name
-##ParameterFile|granuledir|Directory of target granule|True|False
+##ParameterFile|granuledir|Image Directory (For images including subimages use target granule directory)|True|False
 ##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|True|
-##OutputFile|output|Output cloud mask|tif
-##*ParameterBoolean|verbose|verbose output|True
 ##ParameterNumber|mincloudsize|Mininum cloud size (in pixels) to retain, before any buffering|0|None|0
 ##ParameterNumber|cloudbufferdistance|Distance (in metres) to buffer final cloud objects|0|None|150
 ##ParameterNumber|shadowbufferdistance|Distance (in metres) to buffer final cloud shadow objects|0|None|300
@@ -18,6 +16,7 @@ import sys
 import os.path
 import tempfile
 import shutil
+from glob import glob
 from processing.tools import dataobjects
 
 here = os.path.dirname(scriptDescriptionFile)
@@ -49,11 +48,17 @@ try:
             mainRoutine_angles(cmdargs_angles)
         progress.setConsoleInfo('Done.')
 
+    dirs = [x[0] for x in os.walk(granuledir)]
+    for dir in dirs:
+        if 'IMG_DATA' in dir:
+            scene = os.path.basename(glob(os.path.join(dir, '*.jp2'))[0])[:-8]
+            outpath = os.path.join(dir, scene + '_fmask.tif')
+
     cmdargs = Namespace(
             toa=tempvrt,
             anglesfile=anglesfile,
-            output=output,
-            verbose=verbose,
+            output=outpath,
+            #verbose=verbose,
             tempdir=tempdir,
             keepintermediates=False,
             mincloudsize=mincloudsize,
@@ -62,6 +67,10 @@ try:
             cloudprobthreshold=cloudprobthreshold,
             nirsnowthreshold=nirsnowthreshold,
             greensnowthreshold=greensnowthreshold)
+
+
+
+
 
     progress.setConsoleInfo('Running FMask (this may take a while) ...')
     with redirect_print(progress):
@@ -73,4 +82,8 @@ finally:
         pass
 
 progress.setConsoleInfo('Done.')
-dataobjects.load(output, os.path.basename(output))
+dataobjects.load(outpath, os.path.basename(outpath))
+
+
+#OutputFile|output|Output cloud mask|tif
+#*ParameterBoolean|verbose|verbose output|True
