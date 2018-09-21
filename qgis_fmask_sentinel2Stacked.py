@@ -2,7 +2,7 @@
 #==================================
 ##FMask=group
 ##FMask Sentinel 2=name
-##ParameterFile|granuledir|Directory of target granule|True|False
+##ParameterFile|granuledir|Path to .SAFE or tile/granule directory|True|False
 ##ParameterFile|anglesfile|Input angles file containing satellite and sun azimuth and zenith|False|True|
 ##OutputFile|output|Output cloud mask|tif
 ##*ParameterBoolean|verbose|verbose output|True
