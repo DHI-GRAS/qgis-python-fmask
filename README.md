@@ -25,7 +25,7 @@ All others, just do the same the files from `conda-forge`. You need only the con
 
 ### Install `qgis_fmask` package
 
-On Windows with OSGeo4W, start a OSGeo4W Shell and type `pip install https://github.com/DHI-GRAS/qgis-python-fmask.git`.
+On Windows with OSGeo4W, start a OSGeo4W Shell and type `pip install https://github.com/DHI-GRAS/qgis-python-fmask/archive/master.zip`.
 
 All others use the same `pip` command and make sure that you are in the environment that QGIS Python uses.
 
