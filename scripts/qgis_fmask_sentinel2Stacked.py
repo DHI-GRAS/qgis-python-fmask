@@ -21,7 +21,9 @@ from processing.tools import dataobjects
 
 from qgis_fmask.stacks.sentinel_stack import create_sentinel_stack
 from qgis_fmask.interfaces.fmask_sentinel2Stacked import mainRoutine
-from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine as mainRoutine_angles
+from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import (
+    mainRoutine as mainRoutine_angles,
+)
 from qgis_fmask.interfaces.redirect_print import redirect_print
 from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 
