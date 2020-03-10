@@ -22,4 +22,6 @@ from fmask import landsatTOA
 
 
 def mainRoutine(cmdargs):
-    landsatTOA.makeTOAReflectance(cmdargs.infile, cmdargs.mtl, cmdargs.anglesfile, cmdargs.output)
+    landsatTOA.makeTOAReflectance(
+        cmdargs.infile, cmdargs.mtl, cmdargs.anglesfile, cmdargs.output
+    )

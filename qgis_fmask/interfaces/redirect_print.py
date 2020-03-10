@@ -3,7 +3,6 @@ from contextlib import contextmanager
 
 
 class ProgressLogger:
-
     def __init__(self, progress):
         self.progress = progress
 

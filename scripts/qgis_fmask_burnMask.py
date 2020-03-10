@@ -1,5 +1,5 @@
-#Definition of inputs and outputs
-#==================================
+# Definition of inputs and outputs
+# ==================================
 ##Fmask=group
 ##Burn cloud mask=name
 ##ParameterRaster|dataFile|An image file to burn the cloud mask into|False
@@ -22,8 +22,17 @@ resolution = dataRaster.rasterUnitsPerPixelX()
 bandCount = dataRaster.bandCount()
 extent = dataobjects.extent([dataRaster])
 warpMask = system.getTempFilename("tif")
-params = {"INPUT": maskFile, "DEST_SRS": proj, "TR": resolution, "USE_RASTER_EXTENT": True,
-          "RASTER_EXTENT": extent, "EXTENT_CRS": proj, "METHOD": 0, "RTYPE": 0, "OUTPUT": warpMask}
+params = {
+    "INPUT": maskFile,
+    "DEST_SRS": proj,
+    "TR": resolution,
+    "USE_RASTER_EXTENT": True,
+    "RASTER_EXTENT": extent,
+    "EXTENT_CRS": proj,
+    "METHOD": 0,
+    "RTYPE": 0,
+    "OUTPUT": warpMask,
+}
 processing.runalg("gdalogr:warpreproject", params)
 
 progress.setText("Applying mask to image...")
@@ -33,10 +42,15 @@ maskClass = [str(i) for i in range(len(flags)) if flags[i]]
 leaveClass = [str(i) for i in range(len(flags)) if not flags[i]]
 reclassString = " ".join(maskClass) + " = 0\n" + " ".join(leaveClass) + " = 1"
 reclassMask = system.getTempFilename("tif")
-params = {"input": warpMask, "txtrules": reclassString, "output": reclassMask,
-          "GRASS_REGION_PARAMETER": extent, "GRASS_REGION_CELLSIZE_PARAMETER": resolution}
+params = {
+    "input": warpMask,
+    "txtrules": reclassString,
+    "output": reclassMask,
+    "GRASS_REGION_PARAMETER": extent,
+    "GRASS_REGION_CELLSIZE_PARAMETER": resolution,
+}
 processing.runalg("grass7:r.reclass", params)
 
 # Then use OTB band maths on all bands
-params = {"-il":  dataFile+";"+reclassMask, "-exp": "im1*im2b1", "-out": outputFile}
+params = {"-il": dataFile + ";" + reclassMask, "-exp": "im1*im2b1", "-out": outputFile}
 processing.runalg("otb:bandmathx", params)

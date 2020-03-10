@@ -70,5 +70,11 @@ def mainRoutine(cmdargs):
     extentSunAngles = landsatangles.sunAnglesForExtent(imgInfo, mtlInfo)
     satAzimuth = landsatangles.satAzLeftRight(nadirLine)
 
-    landsatangles.makeAnglesImage(cmdargs.templateimg, cmdargs.outfile,
-        nadirLine, extentSunAngles, satAzimuth, imgInfo)
+    landsatangles.makeAnglesImage(
+        cmdargs.templateimg,
+        cmdargs.outfile,
+        nadirLine,
+        extentSunAngles,
+        satAzimuth,
+        imgInfo,
+    )
