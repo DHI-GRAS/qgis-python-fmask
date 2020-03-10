@@ -44,14 +44,25 @@ def checkAnglesFile(inputAnglesFile, toafile):
     anglesImgInfo = fileinfo.ImageInfo(inputAnglesFile)
 
     outputAnglesFile = inputAnglesFile
-    if (toaImgInfo.xRes != anglesImgInfo.xRes) or (toaImgInfo.yRes != anglesImgInfo.yRes):
-        (fd, vrtName) = tempfile.mkstemp(prefix='angles', suffix='.vrt')
+    if (toaImgInfo.xRes != anglesImgInfo.xRes) or (
+        toaImgInfo.yRes != anglesImgInfo.yRes
+    ):
+        (fd, vrtName) = tempfile.mkstemp(prefix="angles", suffix=".vrt")
         os.close(fd)
-        cmdFmt = ("gdalwarp -q -of VRT -tr {xres} {yres} -te {xmin} {ymin} {xmax} {ymax} "+
-            "-r near {infile}  {outfile} ")
-        cmd = cmdFmt.format(xres=toaImgInfo.xRes, yres=toaImgInfo.yRes, xmin=toaImgInfo.xMin,
-            ymin=toaImgInfo.yMin, xmax=toaImgInfo.xMax, ymax=toaImgInfo.yMax,
-            outfile=vrtName, infile=inputAnglesFile)
+        cmdFmt = (
+            "gdalwarp -q -of VRT -tr {xres} {yres} -te {xmin} {ymin} {xmax} {ymax} "
+            + "-r near {infile}  {outfile} "
+        )
+        cmd = cmdFmt.format(
+            xres=toaImgInfo.xRes,
+            yres=toaImgInfo.yRes,
+            xmin=toaImgInfo.xMin,
+            ymin=toaImgInfo.yMin,
+            xmax=toaImgInfo.xMax,
+            ymax=toaImgInfo.yMax,
+            outfile=vrtName,
+            infile=inputAnglesFile,
+        )
         os.system(cmd)
         outputAnglesFile = vrtName
 
@@ -63,7 +74,9 @@ def mainRoutine(cmdargs):
     Main routine that calls fmask
     """
     anglesfile = checkAnglesFile(cmdargs.anglesfile, cmdargs.toa)
-    anglesInfo = config.AnglesFileInfo(anglesfile, 3, anglesfile, 2, anglesfile, 1, anglesfile, 0)
+    anglesInfo = config.AnglesFileInfo(
+        anglesfile, 3, anglesfile, 2, anglesfile, 1, anglesfile, 0
+    )
 
     fmaskFilenames = config.FmaskFilenames()
     fmaskFilenames.setTOAReflectanceFile(cmdargs.toa)
@@ -76,7 +89,9 @@ def mainRoutine(cmdargs):
     fmaskConfig.setTempDir(cmdargs.tempdir)
     fmaskConfig.setTOARefScaling(10000.0)
     fmaskConfig.setMinCloudSize(cmdargs.mincloudsize)
-    fmaskConfig.setEqn17CloudProbThresh(cmdargs.cloudprobthreshold / 100)    # Note conversion from percentage
+    fmaskConfig.setEqn17CloudProbThresh(
+        cmdargs.cloudprobthreshold / 100
+    )  # Note conversion from percentage
     fmaskConfig.setEqn20NirSnowThresh(cmdargs.nirsnowthreshold)
     fmaskConfig.setEqn20GreenSnowThresh(cmdargs.greensnowthreshold)
 

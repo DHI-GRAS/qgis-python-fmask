@@ -64,16 +64,18 @@ def mainRoutine(cmdargs):
 
     sunZenDeg = info.sunZenithGrid
 
-    stackDeg = numpy.array([satAzDegMeanOverBands, satZenDegMeanOverBands, sunAzDeg, sunZenDeg])
+    stackDeg = numpy.array(
+        [satAzDegMeanOverBands, satZenDegMeanOverBands, sunAzDeg, sunZenDeg]
+    )
     stackRadians = numpy.radians(stackDeg)
 
     stackDN = numpy.round(stackRadians / SCALE_TO_RADIANS).astype(numpy.int16)
     nullmask = numpy.isnan(stackDeg)
     stackDN[nullmask] = nullValDN
 
-    lnames = ['SatelliteAzimuth', 'SatelliteZenith', 'SunAzimuth', 'SunZenith']
+    lnames = ["SatelliteAzimuth", "SatelliteZenith", "SunAzimuth", "SunZenith"]
     for i in range(ds.RasterCount):
-        b = ds.GetRasterBand(i+1)
+        b = ds.GetRasterBand(i + 1)
         b.WriteArray(stackDN[i])
         b.SetNoDataValue(nullValDN)
         b.SetDescription(lnames[i])
@@ -87,8 +89,17 @@ def createOutfile(filename, info):
     """
     drvr = gdal.GetDriverByName(applier.DEFAULTDRIVERNAME)
     (nrows, ncols) = info.anglesGridShape
-    ds = drvr.Create(filename, ncols, nrows, 4, gdal.GDT_Int16, applier.DEFAULTCREATIONOPTIONS)
-    gt = (info.anglesULXY[0], info.angleGridXres, 0, info.anglesULXY[1], 0.0, -info.angleGridYres)
+    ds = drvr.Create(
+        filename, ncols, nrows, 4, gdal.GDT_Int16, applier.DEFAULTCREATIONOPTIONS
+    )
+    gt = (
+        info.anglesULXY[0],
+        info.angleGridXres,
+        0,
+        info.anglesULXY[1],
+        0.0,
+        -info.angleGridYres,
+    )
     ds.SetGeoTransform(gt)
 
     sr = osr.SpatialReference()

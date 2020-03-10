@@ -39,21 +39,23 @@ def mainRoutine(cmdargs):
     thermalInfo = config.readThermalInfoFromLandsatMTL(cmdargs.mtl)
 
     anglesfile = cmdargs.anglesfile
-    anglesInfo = config.AnglesFileInfo(anglesfile, 3, anglesfile, 2, anglesfile, 1, anglesfile, 0)
+    anglesInfo = config.AnglesFileInfo(
+        anglesfile, 3, anglesfile, 2, anglesfile, 1, anglesfile, 0
+    )
 
     mtlInfo = config.readMTLFile(cmdargs.mtl)
-    landsat = mtlInfo['SPACECRAFT_ID'][-1]
+    landsat = mtlInfo["SPACECRAFT_ID"][-1]
 
-    if landsat == '4':
+    if landsat == "4":
         sensor = config.FMASK_LANDSAT47
-    elif landsat == '5':
+    elif landsat == "5":
         sensor = config.FMASK_LANDSAT47
-    elif landsat == '7':
+    elif landsat == "7":
         sensor = config.FMASK_LANDSAT47
-    elif landsat == '8':
+    elif landsat == "8":
         sensor = config.FMASK_LANDSAT8
     else:
-        raise SystemExit('Unsupported Landsat sensor')
+        raise SystemExit("Unsupported Landsat sensor")
 
     fmaskFilenames = config.FmaskFilenames()
     fmaskFilenames.setTOAReflectanceFile(cmdargs.toa)
@@ -62,7 +64,7 @@ def mainRoutine(cmdargs):
     if cmdargs.saturation is not None:
         fmaskFilenames.setSaturationMask(cmdargs.saturation)
     else:
-        print('saturation mask not supplied - see fmask_usgsLandsatSaturationMask.py')
+        print("saturation mask not supplied - see fmask_usgsLandsatSaturationMask.py")
 
     fmaskConfig = config.FmaskConfig(sensor)
     fmaskConfig.setThermalInfo(thermalInfo)
@@ -71,7 +73,9 @@ def mainRoutine(cmdargs):
     fmaskConfig.setVerbose(cmdargs.verbose)
     fmaskConfig.setTempDir(cmdargs.tempdir)
     fmaskConfig.setMinCloudSize(cmdargs.mincloudsize)
-    fmaskConfig.setEqn17CloudProbThresh(cmdargs.cloudprobthreshold / 100)    # Note conversion from percentage
+    fmaskConfig.setEqn17CloudProbThresh(
+        cmdargs.cloudprobthreshold / 100
+    )  # Note conversion from percentage
     fmaskConfig.setEqn20NirSnowThresh(cmdargs.nirsnowthreshold)
     fmaskConfig.setEqn20GreenSnowThresh(cmdargs.greensnowthreshold)
 

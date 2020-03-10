@@ -1,5 +1,5 @@
-#Definition of inputs and outputs
-#==================================
+# Definition of inputs and outputs
+# ==================================
 ##FMask=group
 ##FMask Landsat=name
 ##ParameterFile|productdir|Directory of Landsat product|True|False
@@ -30,81 +30,82 @@ if here not in sys.path:
 
 from stacks.landsat_stack import create_landsat_stacks
 from interfaces.fmask_usgsLandsatStacked import mainRoutine
-from interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine as mainRoutine_angles
-from interfaces.fmask_usgsLandsatSaturationMask import mainRoutine as mainRoutine_saturation
+from interfaces.fmask_usgsLandsatMakeAnglesImage import (
+    mainRoutine as mainRoutine_angles,
+)
+from interfaces.fmask_usgsLandsatSaturationMask import (
+    mainRoutine as mainRoutine_saturation,
+)
 from interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_toa
 from interfaces.redirect_print import redirect_print
 from interfaces.landsatmeta import find_mtl_in_product_dir
 
-landsatkey = ['4&5', '7', '8'][landsatkeynr]
+landsatkey = ["4&5", "7", "8"][landsatkeynr]
 
 tempdir = tempfile.mkdtemp()
 try:
     mtl = find_mtl_in_product_dir(productdir)
 
     # create band stacks
-    progress.setConsoleInfo('Creating band stacks ...')
-    outfile_template = os.path.join(tempdir, 'temp_{imagename}.vrt')
+    progress.setConsoleInfo("Creating band stacks ...")
+    outfile_template = os.path.join(tempdir, "temp_{imagename}.vrt")
     vrtfiles = create_landsat_stacks(
-            productdir, outfile_template=outfile_template, landsatkey=landsatkey)
-    progress.setConsoleInfo('Done.')
+        productdir, outfile_template=outfile_template, landsatkey=landsatkey
+    )
+    progress.setConsoleInfo("Done.")
 
     # create angles file
-    anglesfile = anglesfile or os.path.join(tempdir, 'angles.img')
+    anglesfile = anglesfile or os.path.join(tempdir, "angles.img")
     if not os.path.isfile(anglesfile):
-        progress.setConsoleInfo('Creating angles file ...')
-        with np.errstate(invalid='ignore'):
+        progress.setConsoleInfo("Creating angles file ...")
+        with np.errstate(invalid="ignore"):
             mainRoutine_angles(
-                    Namespace(
-                        mtl=mtl,
-                        templateimg=vrtfiles['ref'],
-                        outfile=anglesfile))
-        progress.setConsoleInfo('Done.')
+                Namespace(mtl=mtl, templateimg=vrtfiles["ref"], outfile=anglesfile)
+            )
+        progress.setConsoleInfo("Done.")
 
     # create saturation file
-    saturationfile = saturationfile or os.path.join(tempdir, 'saturation.img')
+    saturationfile = saturationfile or os.path.join(tempdir, "saturation.img")
     if not os.path.isfile(saturationfile):
-        progress.setConsoleInfo('Creating saturation mask file ...')
+        progress.setConsoleInfo("Creating saturation mask file ...")
         mainRoutine_saturation(
-                Namespace(
-                    infile=vrtfiles['ref'],
-                    mtl=mtl,
-                    output=saturationfile))
-        progress.setConsoleInfo('Done.')
+            Namespace(infile=vrtfiles["ref"], mtl=mtl, output=saturationfile)
+        )
+        progress.setConsoleInfo("Done.")
 
     # create TOA file
-    toafile = toafile or os.path.join(tempdir, 'toa.img')
+    toafile = toafile or os.path.join(tempdir, "toa.img")
     if not os.path.isfile(toafile):
-        progress.setConsoleInfo('Creating TOA file ...')
+        progress.setConsoleInfo("Creating TOA file ...")
         mainRoutine_toa(
-                Namespace(
-                    infile=vrtfiles['ref'],
-                    mtl=mtl,
-                    anglesfile=anglesfile,
-                    output=toafile))
-        progress.setConsoleInfo('Done.')
+            Namespace(
+                infile=vrtfiles["ref"], mtl=mtl, anglesfile=anglesfile, output=toafile
+            )
+        )
+        progress.setConsoleInfo("Done.")
 
     cmdargs = Namespace(
-            toa=toafile,
-            thermal=vrtfiles['thermal'],
-            anglesfile=anglesfile,
-            saturation=saturationfile,
-            mtl=mtl,
-            verbose=True,
-            keepintermediates=False,
-            tempdir=tempdir,
-            output=output,
-            mincloudsize=mincloudsize,
-            cloudbufferdistance=cloudbufferdistance,
-            shadowbufferdistance=shadowbufferdistance,
-            cloudprobthreshold=cloudprobthreshold,
-            nirsnowthreshold=nirsnowthreshold,
-            greensnowthreshold=greensnowthreshold)
+        toa=toafile,
+        thermal=vrtfiles["thermal"],
+        anglesfile=anglesfile,
+        saturation=saturationfile,
+        mtl=mtl,
+        verbose=True,
+        keepintermediates=False,
+        tempdir=tempdir,
+        output=output,
+        mincloudsize=mincloudsize,
+        cloudbufferdistance=cloudbufferdistance,
+        shadowbufferdistance=shadowbufferdistance,
+        cloudprobthreshold=cloudprobthreshold,
+        nirsnowthreshold=nirsnowthreshold,
+        greensnowthreshold=greensnowthreshold,
+    )
 
-    progress.setConsoleInfo('Running FMask (this may take a while) ...')
+    progress.setConsoleInfo("Running FMask (this may take a while) ...")
     with redirect_print(progress):
         mainRoutine(cmdargs)
-    progress.setConsoleInfo('Done.')
+    progress.setConsoleInfo("Done.")
 finally:
     try:
         shutil.rmtree(tempdir)
