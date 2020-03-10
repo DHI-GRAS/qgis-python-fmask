@@ -14,21 +14,16 @@
 ##*ParameterNumber|greensnowthreshold|Threshold for Green reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors|0|1|0.1
 
 from argparse import Namespace
-import sys
 import os.path
 import tempfile
 import shutil
 from processing.tools import dataobjects
 
-here = os.path.dirname(scriptDescriptionFile)
-if here not in sys.path:
-    sys.path.append(here)
-
-from stacks.sentinel_stack import create_sentinel_stack
-from interfaces.fmask_sentinel2Stacked import mainRoutine
-from interfaces.fmask_sentinel2makeAnglesImage import mainRoutine as mainRoutine_angles
-from interfaces.redirect_print import redirect_print
-from interfaces.s2meta import find_xml_in_granule_dir
+from qgis_fmask.stacks.sentinel_stack import create_sentinel_stack
+from qgis_fmask.interfaces.fmask_sentinel2Stacked import mainRoutine
+from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine as mainRoutine_angles
+from qgis_fmask.interfaces.redirect_print import redirect_print
+from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 
 
 tempdir = tempfile.mkdtemp()

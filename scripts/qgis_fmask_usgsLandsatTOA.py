@@ -8,7 +8,6 @@
 ##OutputFile|outfile|Output TOA file|tif
 
 from argparse import Namespace
-import sys
 import os.path
 import shutil
 import tempfile
@@ -16,19 +15,11 @@ import tempfile
 import numpy as np
 from processing.tools import dataobjects
 
-here = os.path.dirname(scriptDescriptionFile)
-if here not in sys.path:
-    sys.path.append(here)
-
-from stacks.landsat_stack import create_landsat_stack
-from interfaces.fmask_usgsLandsatTOA import mainRoutine
-from interfaces.fmask_usgsLandsatMakeAnglesImage import (
+from qgis_fmask.stacks.landsat_stack import create_landsat_stack
+from qgis_fmask.interfaces.fmask_usgsLandsatTOA import mainRoutine
+from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import (
     mainRoutine as mainRoutine_angles,
 )
-from interfaces.fmask_usgsLandsatSaturationMask import (
-    mainRoutine as mainRoutine_saturation,
-)
-from interfaces.redirect_print import redirect_print
 from interfaces.landsatmeta import find_mtl_in_product_dir
 
 landsatkey = ["4&5", "7", "8"][landsatkeynr]

@@ -16,7 +16,6 @@
 ##*ParameterNumber|greensnowthreshold|Threshold for Green reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors|0|1|0.1
 
 from argparse import Namespace
-import sys
 import os.path
 import tempfile
 import shutil
@@ -24,21 +23,17 @@ import shutil
 import numpy as np
 from processing.tools import dataobjects
 
-here = os.path.dirname(scriptDescriptionFile)
-if here not in sys.path:
-    sys.path.append(here)
-
-from stacks.landsat_stack import create_landsat_stacks
-from interfaces.fmask_usgsLandsatStacked import mainRoutine
-from interfaces.fmask_usgsLandsatMakeAnglesImage import (
+from qgis_fmask.stacks.landsat_stack import create_landsat_stacks
+from qgis_fmask.interfaces.fmask_usgsLandsatStacked import mainRoutine
+from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import (
     mainRoutine as mainRoutine_angles,
 )
-from interfaces.fmask_usgsLandsatSaturationMask import (
+from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import (
     mainRoutine as mainRoutine_saturation,
 )
-from interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_toa
-from interfaces.redirect_print import redirect_print
-from interfaces.landsatmeta import find_mtl_in_product_dir
+from qgis_fmask.interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_toa
+from qgis_fmask.interfaces.redirect_print import redirect_print
+from qgis_fmask.interfaces.landsatmeta import find_mtl_in_product_dir
 
 landsatkey = ["4&5", "7", "8"][landsatkeynr]
 

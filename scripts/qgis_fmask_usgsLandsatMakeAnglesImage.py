@@ -7,15 +7,9 @@
 ##OutputFile|outfile|Output angles image file|tif
 
 from argparse import Namespace
-import sys
-import os.path
 import numpy as np
 
-here = os.path.dirname(scriptDescriptionFile)
-if here not in sys.path:
-    sys.path.append(here)
-
-from interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
+from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
 
 cmdargs = Namespace(mtl=mtl, templateimg=templateimg, outfile=outfile)
 
