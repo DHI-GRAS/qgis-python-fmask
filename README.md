@@ -1,4 +1,4 @@
-# QGIS_python_fmask
+# qgis-python-fmask
 QGIS interface to python-fmask
 
 We want to make Python FMask available in QGIS.
