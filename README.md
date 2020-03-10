@@ -18,10 +18,17 @@ You can download the packages that suit your system from the `conda-forge` chann
 
 For your convenience, this repo includes the builds for 
 * Windows 64 with Python 2.7 and Numpy 1.12 (`python-fmask-0.4.4-np112py27_0` and `rios-1.4.3-py27_1`)
-* More to follow
 
 So an easy way to install for users with this configuration is to pick the right bundle from the `dependencies` folder and unpack it to your QGIS Python `site=packages` directory, e.g. `C:\OSGeo4W64\apps\Python27\Lib\site-packages`.
 
 All others, just do the same the files from `conda-forge`. You need only the contents of the `Lib/site-packages` folder.
 
-Then place this repo somewhere in your `~/.qgis2/processing/scripts` folder and you are ready to go.
+### Install `qgis_fmask` package
+
+On Windows with OSGeo4W, start a OSGeo4W Shell and type `pip install https://github.com/DHI-GRAS/qgis-python-fmask.git`.
+
+All others use the same `pip` command and make sure that you are in the environment that QGIS Python uses.
+
+### Installing scripts in QGIS2
+
+Place this repo somewhere in your `~/.qgis2/processing/scripts` folder.
