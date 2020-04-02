@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="qgis_fmask",
-    version="v2.0.0",
+    version="v3.0.1",
     description="Scripts for runnning Python Fmask in QGIS",
     author="Jonas Sølvsteen",
     author_email="josl@dhigroup.com",
