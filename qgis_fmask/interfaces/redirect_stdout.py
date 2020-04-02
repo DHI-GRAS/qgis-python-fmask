@@ -13,6 +13,13 @@ class FeedbackLogger:
 
 @contextmanager
 def redirect_stdout(feedback):
+    """Context manager for temporarily setting a FeedbackLogger as stdout
+
+    Parameters
+    ----------
+    feedback : feedback instance
+        from alg decorators
+    """
     oldout = sys.stdout
     sys.stdout = FeedbackLogger(feedback)
     try:
@@ -21,7 +28,9 @@ def redirect_stdout(feedback):
         sys.stdout = oldout
 
 
-def redirect_this(func):
+def redirect_stdout_to_feedback(func):
+    """Decorator for algorithm functions that temporarily sets a FeedbackLogger as stdout"""
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         if "feedback" in kwargs:
