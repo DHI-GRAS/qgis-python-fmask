@@ -2,8 +2,8 @@ from contextlib import contextmanager
 import functools
 import sys
 
-class FeedbackLogger:
 
+class FeedbackLogger:
     def __init__(self, feedback):
         self.feedback = feedback
 
@@ -20,13 +20,14 @@ def redirect_stdout(feedback):
     finally:
         sys.stdout = oldout
 
+
 def redirect_this(func):
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
-        if 'feedback' in kwargs:
-            with redirect_stdout(kwargs['feedback']):
+        if "feedback" in kwargs:
+            with redirect_stdout(kwargs["feedback"]):
                 return func(*args, **kwargs)
         else:
             return func(*args, **kwargs)
-    return wrapped
 
+    return wrapped
