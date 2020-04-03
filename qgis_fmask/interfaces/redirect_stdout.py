@@ -33,10 +33,19 @@ def redirect_stdout_to_feedback(func):
 
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
-        if "feedback" in kwargs:
-            with redirect_stdout(kwargs["feedback"]):
-                return func(*args, **kwargs)
-        else:
+        feedback = kwargs.get("feedback", None)
+        if feedback is None:
+            for arg in args:
+                # quacks like feedback
+                if hasattr(arg, "pushConsoleInfo"):
+                    feedback = arg
+                    break
+            else:
+                raise RuntimeError(
+                    "Stdout redirect requires `feedback` object as positional or keyword argument"
+                )
+
+        with redirect_stdout(feedback):
             return func(*args, **kwargs)
 
     return wrapped
