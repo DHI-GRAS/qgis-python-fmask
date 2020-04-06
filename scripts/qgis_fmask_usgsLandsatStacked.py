@@ -1,21 +1,7 @@
-# Definition of inputs and outputs
-# ==================================
-##FMask=group
-##FMask Landsat=name
-##ParameterFile|productdir|Directory of Landsat product|True|False
-##ParameterSelection|landsatkeynr|Landsat sensor|Landsat 4&5;Landsat 7;Landsat 8|2
-##OutputFile|anglesfile|Angles file. If not existing, it will be created in this location.
-##OutputFile|saturationfile|Saturation mask file. If not existing, it will be created in this location.
-##OutputFile|toafile|TOA file. If not existing, it will be created in this location.
-##OutputFile|output|Output cloud mask|tif
-##ParameterNumber|mincloudsize|Mininum cloud size (in pixels) to retain, before any buffering|0|None|0
-##ParameterNumber|cloudbufferdistance|Distance (in metres) to buffer final cloud objects|0|None|150
-##ParameterNumber|shadowbufferdistance|Distance (in metres) to buffer final cloud shadow objects|0|None|300
-##ParameterNumber|cloudprobthreshold|Cloud probability threshold (percentage) (Eqn 17)|0|100|20
-##*ParameterNumber|nirsnowthreshold|Threshold for NIR reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors|0|1|0.11
-##*ParameterNumber|greensnowthreshold|Threshold for Green reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors|0|1|0.1
-
+from qgis.processing import alg
+from processing.core.ProcessingConfig import ProcessingConfig
 from argparse import Namespace
+import sys
 import os.path
 import tempfile
 import shutil
@@ -25,86 +11,121 @@ from processing.tools import dataobjects
 
 from qgis_fmask.stacks.landsat_stack import create_landsat_stacks
 from qgis_fmask.interfaces.fmask_usgsLandsatStacked import mainRoutine
-from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import (
-    mainRoutine as mainRoutine_angles,
-)
-from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import (
-    mainRoutine as mainRoutine_saturation,
-)
+from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine as mainRoutine_angles
+from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine as mainRoutine_saturation
 from qgis_fmask.interfaces.fmask_usgsLandsatTOA import mainRoutine as mainRoutine_toa
-from qgis_fmask.interfaces.redirect_print import redirect_print
+from qgis_fmask.interfaces.redirect_stdout import redirect_stdout_to_feedback
 from qgis_fmask.interfaces.landsatmeta import find_mtl_in_product_dir
 
-landsatkey = ["4&5", "7", "8"][landsatkeynr]
+# ##OutputFile|output|Output cloud mask|tif #TODO extention should be tif. - implemented without.
+import sys
 
-tempdir = tempfile.mkdtemp()
-try:
-    mtl = find_mtl_in_product_dir(productdir)
+@alg(
+    name="fmasklandsat",
+    label=alg.tr("FMask Landsat"),
+    group="fmask",
+    group_label=alg.tr("FMask")
+)
+@alg.input(type=alg.FILE, name="productdir", label="Directory of Landsat product", behavior=1, optional=False)
+@alg.input(type=alg.ENUM, name='landsatkeynr', label='Landsat sensor', options=['Landsat 4&5', 'Landsat 7', 'Landsat 8'], default=2)
+@alg.input(type=alg.FILE_DEST, name="anglesfile", label="Angles file. If not existing, it will be created in this location.")
+@alg.input(type=alg.FILE_DEST, name="saturationfile", label="Saturation mask file. If kot existing, it will be created in this location.")
+@alg.input(type=alg.FILE_DEST, name="toafile", label="TOA file. If not existing, it will be created in this location.")
+@alg.input(type=alg.FILE_DEST, name="output", label="Output cloud mask")
+@alg.input(type=int, name='mincloudsize', label='Mininum cloud size (in pixels) to retain, before any buffering', minValue=0, maxValue=sys.float_info.max, default=0)
+@alg.input(type=int, name='cloudbufferdistance', label='Distance (in metres) to buffer final cloud objects', minValue=0, default=0)
+@alg.input(type=int, name='shadowbufferdistance', label='Distance (in metres) to buffer final cloud shadow objects', minValue=0, default=150)
+@alg.input(type=int, name='cloudprobthreshold', label='Mininum cloud size (in pixels) to retain, before any buffering', minValue=0, default=300)
+@alg.input(type=float, name='nirsnowthreshold', label='Threshold for NIR reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors', minValue=0, maxValue=1, default=0.11, advanced=True)
+@alg.input(type=float, name='greensnowthreshold', label='Threshold for Green reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors', minValue=0, maxValue=1, default=1.1, advanced=True)
+@redirect_stdout_to_feedback
+def fmasklandsat(instance, parameters, context, feedback, inputs):
+    """ fmasklandsat """
 
-    # create band stacks
-    progress.setConsoleInfo("Creating band stacks ...")
-    outfile_template = os.path.join(tempdir, "temp_{imagename}.vrt")
-    vrtfiles = create_landsat_stacks(
-        productdir, outfile_template=outfile_template, landsatkey=landsatkey
-    )
-    progress.setConsoleInfo("Done.")
+    productdir = instance.parameterAsString(parameters, 'productdir', context)
+    landsatkeynr = instance.parameterAsInt(parameters, 'landsatkeynr', context)
+    anglesfile = instance.parameterAsString(parameters, 'anglesfile', context)
+    saturationfile = instance.parameterAsString(parameters, 'saturationfile', context)
+    toafile = instance.parameterAsString(parameters, 'toafile', context)
+    output = instance.parameterAsString(parameters, 'output', context)
+    mincloudsize = instance.parameterAsInt(parameters, 'mincloudsize', context)
+    cloudbufferdistance = instance.parameterAsDouble(parameters, 'cloudbufferdistance', context)
+    shadowbufferdistance = instance.parameterAsDouble(parameters, 'shadowbufferdistance', context)
+    cloudprobthreshold = instance.parameterAsDouble(parameters, 'cloudprobthreshold', context)
+    nirsnowthreshold = instance.parameterAsDouble(parameters, 'nirsnowthreshold', context)
+    greensnowthreshold = instance.parameterAsDouble(parameters, 'greensnowthreshold', context)
 
-    # create angles file
-    anglesfile = anglesfile or os.path.join(tempdir, "angles.img")
-    if not os.path.isfile(anglesfile):
-        progress.setConsoleInfo("Creating angles file ...")
-        with np.errstate(invalid="ignore"):
-            mainRoutine_angles(
-                Namespace(mtl=mtl, templateimg=vrtfiles["ref"], outfile=anglesfile)
-            )
-        progress.setConsoleInfo("Done.")
+    landsatkey = ['4&5', '7', '8'][landsatkeynr]
+    tempdir = tempfile.mkdtemp()
 
-    # create saturation file
-    saturationfile = saturationfile or os.path.join(tempdir, "saturation.img")
-    if not os.path.isfile(saturationfile):
-        progress.setConsoleInfo("Creating saturation mask file ...")
-        mainRoutine_saturation(
-            Namespace(infile=vrtfiles["ref"], mtl=mtl, output=saturationfile)
-        )
-        progress.setConsoleInfo("Done.")
-
-    # create TOA file
-    toafile = toafile or os.path.join(tempdir, "toa.img")
-    if not os.path.isfile(toafile):
-        progress.setConsoleInfo("Creating TOA file ...")
-        mainRoutine_toa(
-            Namespace(
-                infile=vrtfiles["ref"], mtl=mtl, anglesfile=anglesfile, output=toafile
-            )
-        )
-        progress.setConsoleInfo("Done.")
-
-    cmdargs = Namespace(
-        toa=toafile,
-        thermal=vrtfiles["thermal"],
-        anglesfile=anglesfile,
-        saturation=saturationfile,
-        mtl=mtl,
-        verbose=True,
-        keepintermediates=False,
-        tempdir=tempdir,
-        output=output,
-        mincloudsize=mincloudsize,
-        cloudbufferdistance=cloudbufferdistance,
-        shadowbufferdistance=shadowbufferdistance,
-        cloudprobthreshold=cloudprobthreshold,
-        nirsnowthreshold=nirsnowthreshold,
-        greensnowthreshold=greensnowthreshold,
-    )
-
-    progress.setConsoleInfo("Running FMask (this may take a while) ...")
-    with redirect_print(progress):
-        mainRoutine(cmdargs)
-    progress.setConsoleInfo("Done.")
-finally:
     try:
-        shutil.rmtree(tempdir)
-    except OSError:
-        pass
+        mtl = find_mtl_in_product_dir(productdir)
 
-dataobjects.load(output, os.path.basename(output))
+        # create band stacks
+        feedback.pushConsoleInfo('Creating band stacks ...')
+        outfile_template = os.path.join(tempdir, 'temp_{imagename}.vrt')
+        vrtfiles = create_landsat_stacks(
+            productdir, outfile_template=outfile_template, landsatkey=landsatkey)
+        feedback.pushConsoleInfo('Done.')
+
+        # create angles file
+        anglesfile = anglesfile or os.path.join(tempdir, 'angles.img')
+        if not os.path.isfile(anglesfile):
+            feedback.pushConsoleInfo('Creating angles file ...')
+            with np.errstate(invalid='ignore'):
+                mainRoutine_angles(
+                        Namespace(
+                            mtl = mtl,
+                            templateimg = vrtfiles['ref'],
+                            outfile = anglesfile))
+            feedback.pushConsoleInfo('Done.')
+
+        # create saturation file
+        saturationfile = saturationfile or os.path.join(tempdir, 'saturation.img')
+        if not os.path.isfile(saturationfile):
+            feedback.pushConsoleInfo('Creating saturation mask file ...')
+            mainRoutine_saturation(
+                    Namespace(
+                        infile = vrtfiles['ref'],
+                        mtl =mtl,
+                        output=saturationfile))
+            feedback.pushConsoleInfo('Done.')
+
+        # create TOA file
+        toafile = toafile or os.path.join(tempdir, 'toa.img')
+        if not os.path.isfile(toafile):
+            feedback.pushConsoleInfo('Creating TOA file ...')
+            mainRoutine_toa(
+                    Namespace(
+                        infile = vrtfiles['ref'],
+                        mtl =mtl,
+                        anglesfile = anglesfile,
+                        output=toafile))
+            feedback.pushConsoleInfo('Done.')
+
+        cmdargs = Namespace(
+                toa=toafile,
+                thermal =vrtfiles['thermal'],
+                anglesfile = anglesfile,
+                saturation=saturationfile,
+                mtl =mtl,
+                verbose = True,
+                keepintermediates = False,
+                tempdir=tempdir,
+                output=output,
+                mincloudsize = mincloudsize,
+                cloudbufferdistance = cloudbufferdistance,
+                shadowbufferdistance = shadowbufferdistance,
+                cloudprobthreshold=cloudprobthreshold,
+                nirsnowthreshold=nirsnowthreshold,
+                greensnowthreshold=greensnowthreshold)
+
+        feedback.pushConsoleInfo('Running FMask (this may take a while) ...')
+        feedback.pushConsoleInfo('Done.')
+    finally:
+        try:
+            shutil.rmtree(tempdir)
+        except OSError:
+            pass
+
+    dataobjects.load(output, os.path.basename(output))
