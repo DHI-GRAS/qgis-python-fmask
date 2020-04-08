@@ -61,28 +61,80 @@ from qgis_fmask.interfaces.landsatmeta import find_mtl_in_product_dir
     label="TOA file. If not existing, it will be created in this location.",
 )
 @alg.input(type=alg.FILE_DEST, name="output", label="Output cloud mask")
-@alg.input(type=int, name='mincloudsize', label='Mininum cloud size (in pixels) to retain, before any buffering', minValue=0, maxValue=sys.float_info.max, default=0)
-@alg.input(type=int, name='cloudbufferdistance', label='Distance (in metres) to buffer final cloud objects', minValue=0, default=150)
-@alg.input(type=int, name='shadowbufferdistance', label='Distance (in metres) to buffer final cloud shadow objects', minValue=0, default=300)
-@alg.input(type=int, name='cloudprobthreshold', label='Cloud probability threshold (percentage) (Eqn 17)', minValue=0, maxValue=100, default=20)
-@alg.input(type=float, name='nirsnowthreshold', label='Threshold for NIR reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors', minValue=0, maxValue=1, default=0.11, advanced=True)
-@alg.input(type=float, name='greensnowthreshold', label='Threshold for Green reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors', minValue=0, maxValue=1, default=0.1, advanced=True)
+@alg.input(
+    type=int,
+    name="mincloudsize",
+    label="Mininum cloud size (in pixels) to retain, before any buffering",
+    minValue=0,
+    maxValue=sys.float_info.max,
+    default=0,
+)
+@alg.input(
+    type=int,
+    name="cloudbufferdistance",
+    label="Distance (in metres) to buffer final cloud objects",
+    minValue=0,
+    default=150,
+)
+@alg.input(
+    type=int,
+    name="shadowbufferdistance",
+    label="Distance (in metres) to buffer final cloud shadow objects",
+    minValue=0,
+    default=300,
+)
+@alg.input(
+    type=int,
+    name="cloudprobthreshold",
+    label="Cloud probability threshold (percentage) (Eqn 17)",
+    minValue=0,
+    maxValue=100,
+    default=20,
+)
+@alg.input(
+    type=float,
+    name="nirsnowthreshold",
+    label="Threshold for NIR reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors",
+    minValue=0,
+    maxValue=1,
+    default=0.11,
+    advanced=True,
+)
+@alg.input(
+    type=float,
+    name="greensnowthreshold",
+    label="Threshold for Green reflectance for snow detection (Eqn 20). Increase this to reduce snow commission errors",
+    minValue=0,
+    maxValue=1,
+    default=0.1,
+    advanced=True,
+)
 @redirect_stdout_to_feedback
 def fmasklandsat(instance, parameters, context, feedback, inputs):
     """ fmasklandsat """
 
-    productdir = instance.parameterAsString(parameters, 'productdir', context)
-    landsatkeynr = instance.parameterAsInt(parameters, 'landsatkeynr', context)
-    anglesfile = instance.parameterAsString(parameters, 'anglesfile', context)
-    saturationfile = instance.parameterAsString(parameters, 'saturationfile', context)
-    toafile = instance.parameterAsString(parameters, 'toafile', context)
-    output = instance.parameterAsString(parameters, 'output', context)
-    mincloudsize = instance.parameterAsInt(parameters, 'mincloudsize', context)
-    cloudbufferdistance = instance.parameterAsInt(parameters, 'cloudbufferdistance', context)
-    shadowbufferdistance = instance.parameterAsInt(parameters, 'shadowbufferdistance', context)
-    cloudprobthreshold = instance.parameterAsInt(parameters, 'cloudprobthreshold', context)
-    nirsnowthreshold = instance.parameterAsDouble(parameters, 'nirsnowthreshold', context)
-    greensnowthreshold = instance.parameterAsDouble(parameters, 'greensnowthreshold', context)
+    productdir = instance.parameterAsString(parameters, "productdir", context)
+    landsatkeynr = instance.parameterAsInt(parameters, "landsatkeynr", context)
+    anglesfile = instance.parameterAsString(parameters, "anglesfile", context)
+    saturationfile = instance.parameterAsString(parameters, "saturationfile", context)
+    toafile = instance.parameterAsString(parameters, "toafile", context)
+    output = instance.parameterAsString(parameters, "output", context)
+    mincloudsize = instance.parameterAsInt(parameters, "mincloudsize", context)
+    cloudbufferdistance = instance.parameterAsInt(
+        parameters, "cloudbufferdistance", context
+    )
+    shadowbufferdistance = instance.parameterAsInt(
+        parameters, "shadowbufferdistance", context
+    )
+    cloudprobthreshold = instance.parameterAsInt(
+        parameters, "cloudprobthreshold", context
+    )
+    nirsnowthreshold = instance.parameterAsDouble(
+        parameters, "nirsnowthreshold", context
+    )
+    greensnowthreshold = instance.parameterAsDouble(
+        parameters, "greensnowthreshold", context
+    )
 
     landsatkey = ["4&5", "7", "8"][landsatkeynr]
     tempdir = tempfile.mkdtemp()
@@ -132,25 +184,26 @@ def fmasklandsat(instance, parameters, context, feedback, inputs):
             feedback.pushConsoleInfo("Done.")
 
         cmdargs = Namespace(
-                toa=toafile,
-                thermal=vrtfiles['thermal'],
-                anglesfile=anglesfile,
-                saturation=saturationfile,
-                mtl=mtl,
-                verbose=True,
-                keepintermediates=False,
-                tempdir=tempdir,
-                output=output,
-                mincloudsize=mincloudsize,
-                cloudbufferdistance=cloudbufferdistance,
-                shadowbufferdistance=shadowbufferdistance,
-                cloudprobthreshold=cloudprobthreshold,
-                nirsnowthreshold=nirsnowthreshold,
-                greensnowthreshold=greensnowthreshold)
+            toa=toafile,
+            thermal=vrtfiles["thermal"],
+            anglesfile=anglesfile,
+            saturation=saturationfile,
+            mtl=mtl,
+            verbose=True,
+            keepintermediates=False,
+            tempdir=tempdir,
+            output=output,
+            mincloudsize=mincloudsize,
+            cloudbufferdistance=cloudbufferdistance,
+            shadowbufferdistance=shadowbufferdistance,
+            cloudprobthreshold=cloudprobthreshold,
+            nirsnowthreshold=nirsnowthreshold,
+            greensnowthreshold=greensnowthreshold,
+        )
 
-        feedback.pushConsoleInfo('Running FMask (this may take a while) ...')
+        feedback.pushConsoleInfo("Running FMask (this may take a while) ...")
         mainRoutine(cmdargs)
-        feedback.pushConsoleInfo('Done.')
+        feedback.pushConsoleInfo("Done.")
     finally:
         try:
             shutil.rmtree(tempdir)
