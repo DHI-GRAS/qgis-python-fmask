@@ -6,6 +6,7 @@ import numpy as np
 
 from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
 
+
 @alg(
     name="landsatmakeanglesimage",
     label=alg.tr("Landsat Make Angles Image"),
@@ -18,7 +19,7 @@ from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
     label="MTL file",
     behavior=0,
     optional=False,
-    fileFilter="tif"
+    fileFilter="tif",
 )
 @alg.input(
     type=alg.FILE,
@@ -26,13 +27,9 @@ from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
     label="Image file name to use as template for output angles image",
     behavior=0,
     optional=False,
-    fileFilter="tif"
+    fileFilter="tif",
 )
-@alg.input(
-    type=alg.FILE_DEST,
-    name="outfile",
-    label="Output angles image file"
-)
+@alg.input(type=alg.FILE_DEST, name="outfile", label="Output angles image file")
 def landsatmakeanglesimage(instance, parameters, context, feedback, inputs):
     """ landsatmakeanglesimage """
     mtl = instance.parameterAsString(parameters, "mtl", context)

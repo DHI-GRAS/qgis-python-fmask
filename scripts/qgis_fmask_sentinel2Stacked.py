@@ -14,6 +14,7 @@ from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import (
 from qgis_fmask.interfaces.redirect_stdout import redirect_stdout_to_feedback
 from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 
+
 @alg(
     name="fmasksentinel2",
     label=alg.tr("FMask Sentinel 2"),
@@ -33,40 +34,32 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
     label="Input angles file containing satellite and sun azimuth and zenith",
     behavior=0,
     optional=True,
-    fileFilter="tif"
+    fileFilter="tif",
 )
 @alg.input(
-    type=alg.FILE_DEST,
-    name="output",
-    label="Output cloud mask",
-    fileFilter="tif"
+    type=alg.FILE_DEST, name="output", label="Output cloud mask", fileFilter="tif"
 )
-@alg.input(
-    type=bool,
-    name="verbose",
-    label="verbose output",
-    default=True
-)
+@alg.input(type=bool, name="verbose", label="verbose output", default=True)
 @alg.input(
     type=int,
     name="mincloudsize",
     label="Mininum cloud size (in pixels) to retain, before any buffering",
     minValue=0,
-    default=0
+    default=0,
 )
 @alg.input(
     type=int,
     name="cloudbufferdistance",
     label="Distance (in metres) to buffer final cloud objects",
     minValue=0,
-    default=150
+    default=150,
 )
 @alg.input(
     type=int,
     name="shadowbufferdistance",
     label="Distance (in metres) to buffer final cloud shadow objects",
     minValue=0,
-    default=300
+    default=300,
 )
 @alg.input(
     type=int,
@@ -74,7 +67,7 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
     label="Cloud probability threshold (percentage) (Eqn 17)",
     minValue=0,
     maxValue=100,
-    default=20
+    default=20,
 )
 @alg.input(
     type=float,
@@ -83,7 +76,7 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
     minValue=0,
     maxValue=1,
     default=0.11,
-    advanced=True
+    advanced=True,
 )
 @alg.input(
     type=float,
@@ -92,7 +85,7 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
     minValue=0,
     maxValue=1,
     default=0.1,
-    advanced=True
+    advanced=True,
 )
 @redirect_stdout_to_feedback
 def fmasksentinel2(instance, parameters, context, feedback, inputs):
@@ -102,11 +95,21 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
     output = instance.parameterAsString(parameters, "output", context)
     verbose = instance.parameterAsBool(parameters, "verbose", context)
     mincloudsize = instance.parameterAsInt(parameters, "mincloudsize", context)
-    cloudbufferdistance = instance.parameterAsInt(parameters, "cloudbufferdistance", context)
-    shadowbufferdistance = instance.parameterAsInt(parameters, "shadowbufferdistance", context)
-    cloudprobthreshold = instance.parameterAsInt(parameters, "cloudprobthreshold", context)
-    nirsnowthreshold = instance.parameterAsDouble(parameters, "nirsnowthreshold", context)
-    greensnowthreshold = instance.parameterAsDouble(parameters, "greensnowthreshold", context)
+    cloudbufferdistance = instance.parameterAsInt(
+        parameters, "cloudbufferdistance", context
+    )
+    shadowbufferdistance = instance.parameterAsInt(
+        parameters, "shadowbufferdistance", context
+    )
+    cloudprobthreshold = instance.parameterAsInt(
+        parameters, "cloudprobthreshold", context
+    )
+    nirsnowthreshold = instance.parameterAsDouble(
+        parameters, "nirsnowthreshold", context
+    )
+    greensnowthreshold = instance.parameterAsDouble(
+        parameters, "greensnowthreshold", context
+    )
 
     tempdir = tempfile.mkdtemp()
     try:

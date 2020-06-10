@@ -5,6 +5,8 @@ import os.path
 import numpy as np
 
 from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
+
+
 @alg(
     name="landsatsaturationmask",
     label=alg.tr("Landsat Saturation Mask"),
@@ -24,7 +26,7 @@ from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
     label="MTL file",
     behavior=0,
     optional=False,
-    fileFilter="txt"
+    fileFilter="txt",
 )
 @alg.input(
     type=alg.FILE,
@@ -33,12 +35,7 @@ from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
     behavior=0,
     optional=True,
 )
-@alg.input(
-    type=alg.FILE_DEST,
-    name="outfile",
-    label="Output angles image file"
-)
-
+@alg.input(type=alg.FILE_DEST, name="outfile", label="Output angles image file")
 def landsatsaturationmask(instance, parameters, context, feedback, inputs):
     """ landsatsaturationmask """
     infile = instance.parameterAsString(parameters, "infile", context)
