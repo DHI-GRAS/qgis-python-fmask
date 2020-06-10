@@ -5,6 +5,7 @@ import os.path
 import numpy as np
 from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine
 
+
 @alg(
     name="sentinel2makeanglesimage",
     label=alg.tr("Sentinel 2 Make Angles Image"),
@@ -18,12 +19,7 @@ from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine
     behavior=1,
     optional=False,
 )
-@alg.output(
-    type=alg.FILE,
-    name="outfile",
-    label="Output angles image fil"
-)
-
+@alg.output(type=alg.FILE, name="outfile", label="Output angles image fil")
 def fmasklandsat(instance, parameters, context, feedback, inputs):
     """ fmasklandsat """
 
