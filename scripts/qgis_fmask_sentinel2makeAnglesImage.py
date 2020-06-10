@@ -19,7 +19,7 @@ from qgis_fmask.interfaces.fmask_sentinel2makeAnglesImage import mainRoutine
     behavior=1,
     optional=False,
 )
-@alg.output(type=alg.FILE, name="outfile", label="Output angles image fil")
+@alg.input(type=alg.FILE_DEST, name="outfile", label="Output angles image file")
 def fmasklandsat(instance, parameters, context, feedback, inputs):
     """ fmasklandsat """
 
