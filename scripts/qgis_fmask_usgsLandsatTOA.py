@@ -28,6 +28,7 @@ from qgis_fmask.interfaces.redirect_stdout import redirect_stdout_to_feedback
 from qgis_fmask.interfaces.landsatmeta import find_mtl_in_product_dir
 from qgis.processing import alg
 
+
 @alg(
     name="landsattopofatmosphere",
     label=alg.tr("Landsat Top Of Atmosphere"),
@@ -71,7 +72,9 @@ def landsattopofatmosphere(instance, parameters, context, feedback, inputs):
             feedback.pushConsoleInfo("Done.")
 
         feedback.pushConsoleInfo("Creating TOA image ...")
-        cmdargs = Namespace(infile=refimg, mtl=mtl, anglesfile=anglesfile, output=outfile)
+        cmdargs = Namespace(
+            infile=refimg, mtl=mtl, anglesfile=anglesfile, output=outfile
+        )
         with np.errstate(invalid="ignore"):
             mainRoutine(cmdargs)
         feedback.pushConsoleInfo("Done.")
