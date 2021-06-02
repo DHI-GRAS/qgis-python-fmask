@@ -89,7 +89,7 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 )
 @redirect_stdout_to_feedback
 def fmasksentinel2(instance, parameters, context, feedback, inputs):
-    """ fmasksentinel2 """
+    """fmasksentinel2"""
     granuledir = instance.parameterAsString(parameters, "granuledir", context)
     anglesfile = instance.parameterAsString(parameters, "anglesfile", context)
     output = instance.parameterAsString(parameters, "output", context)

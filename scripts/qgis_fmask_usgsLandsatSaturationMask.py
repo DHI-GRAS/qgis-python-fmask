@@ -37,7 +37,7 @@ from qgis_fmask.interfaces.fmask_usgsLandsatSaturationMask import mainRoutine
 )
 @alg.input(type=alg.FILE_DEST, name="outfile", label="Output angles image file")
 def landsatsaturationmask(instance, parameters, context, feedback, inputs):
-    """ landsatsaturationmask """
+    """landsatsaturationmask"""
     infile = instance.parameterAsString(parameters, "infile", context)
     mtl = instance.parameterAsString(parameters, "mtl", context)
     anglesfile = instance.parameterAsString(parameters, "anglesfile", context)

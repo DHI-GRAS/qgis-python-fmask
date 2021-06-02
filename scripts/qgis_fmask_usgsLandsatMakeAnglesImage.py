@@ -31,7 +31,7 @@ from qgis_fmask.interfaces.fmask_usgsLandsatMakeAnglesImage import mainRoutine
 )
 @alg.input(type=alg.FILE_DEST, name="outfile", label="Output angles image file")
 def landsatmakeanglesimage(instance, parameters, context, feedback, inputs):
-    """ landsatmakeanglesimage """
+    """landsatmakeanglesimage"""
     mtl = instance.parameterAsString(parameters, "mtl", context)
     templateimg = instance.parameterAsString(parameters, "templateimg", context)
     outfile = instance.parameterAsString(parameters, "outfile", context)

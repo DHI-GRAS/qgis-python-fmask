@@ -68,7 +68,7 @@ from qgis import processing
 )
 @alg.input(type=alg.FILE_DEST, name="outputFile", label="Maked output image")
 def burncloudmask(instance, parameters, context, feedback, inputs):
-    """ burncloudmask """
+    """burncloudmask"""
 
     dataRaster = instance.parameterAsRasterLayer(parameters, "dataFile", context)
     # Run GDAL warp to make sure that the mask file exactly aligns with the image file

@@ -46,7 +46,7 @@ from qgis.processing import alg
 @alg.input(type=alg.FILE_DEST, name="outfile", label="Outfile")
 @redirect_stdout_to_feedback
 def landsattopofatmosphere(instance, parameters, context, feedback, inputs):
-    """ landsattopofatmosphere """
+    """landsattopofatmosphere"""
     landsatkey = ["4&5", "7", "8"][landsatkeynr]
 
     tempdir = tempfile.mkdtemp()
