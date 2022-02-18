@@ -28,6 +28,7 @@ from rios import fileinfo
 
 from fmask import config
 from fmask import fmask
+from fmask.cmdline import sentinel2Stacked
 
 
 def checkAnglesFile(inputAnglesFile, toafile):
@@ -73,6 +74,7 @@ def mainRoutine(cmdargs):
     """
     Main routine that calls fmask
     """
+    topMeta = sentinel2Stacked.readTopLevelMeta(cmdargs)
     anglesfile = checkAnglesFile(cmdargs.anglesfile, cmdargs.toa)
     anglesInfo = config.AnglesFileInfo(
         anglesfile, 3, anglesfile, 2, anglesfile, 1, anglesfile, 0
@@ -87,11 +89,12 @@ def mainRoutine(cmdargs):
     fmaskConfig.setKeepIntermediates(cmdargs.keepintermediates)
     fmaskConfig.setVerbose(cmdargs.verbose)
     fmaskConfig.setTempDir(cmdargs.tempdir)
-    fmaskConfig.setTOARefScaling(10000.0)
+    fmaskConfig.setTOARefScaling(topMeta.scaleVal)
+    offsetDict = sentinel2Stacked.makeRefOffsetDict(topMeta)
+    fmaskConfig.setTOARefOffsetDict(offsetDict)
     fmaskConfig.setMinCloudSize(cmdargs.mincloudsize)
-    fmaskConfig.setEqn17CloudProbThresh(
-        cmdargs.cloudprobthreshold / 100
-    )  # Note conversion from percentage
+    # Note conversion from percentage
+    fmaskConfig.setEqn17CloudProbThresh(cmdargs.cloudprobthreshold / 100)
     fmaskConfig.setEqn20NirSnowThresh(cmdargs.nirsnowthreshold)
     fmaskConfig.setEqn20GreenSnowThresh(cmdargs.greensnowthreshold)
 

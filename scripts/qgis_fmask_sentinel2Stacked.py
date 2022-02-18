@@ -110,6 +110,10 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
     greensnowthreshold = instance.parameterAsDouble(
         parameters, "greensnowthreshold", context
     )
+    if granuledir.endswith(".SAFE"):
+        safedir = granuledir
+    else:
+        safedir = None
 
     tempdir = tempfile.mkdtemp()
     try:
@@ -136,6 +140,8 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
             output=output,
             verbose=verbose,
             tempdir=tempdir,
+            safedir=safedir,
+            granuledir=granuledir,
             keepintermediates=False,
             mincloudsize=mincloudsize,
             cloudbufferdistance=cloudbufferdistance,
