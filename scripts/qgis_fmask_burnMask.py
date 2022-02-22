@@ -77,20 +77,19 @@ def burncloudmask(instance, parameters, context, feedback, inputs):
     # feedback.setProgressText(str(dir(dataRaster)))
 
     feedback.setProgressText(str(dir(parameters["dataFile"])))
-    extent = dataRaster.extent().asWktPolygon()
+    extent = dataRaster.extent()
     proj = dataRaster.crs().toWkt()
     resolution = dataRaster.rasterUnitsPerPixelX()
     bandCount = dataRaster.bandCount()
     warpMask = system.getTempFilename("tif")
     params = {
         "INPUT": parameters["maskFile"],
-        "DEST_SRS": proj,
-        "TR": resolution,
-        "USE_RASTER_EXTENT": True,
-        "RASTER_EXTENT": extent,
-        "EXTENT_CRS": proj,
-        "METHOD": 0,
-        "RTYPE": 0,
+        "TARGET_CRS": proj,
+        "TARGET_RESOLUTION": resolution,
+        "TARGET_EXTENT": extent,
+        "TARGET_EXTENT_CRS": proj,
+        "RESAMPLING": 0,
+        "DATA_TYPE": 0,
         "OUTPUT": warpMask,
     }
     processing.run("gdal:warpreproject", params, feedback=feedback, context=context)
