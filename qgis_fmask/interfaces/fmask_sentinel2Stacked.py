@@ -94,7 +94,7 @@ def mainRoutine(cmdargs):
     fmaskConfig.setTOARefOffsetDict(offsetDict)
     fmaskConfig.setMinCloudSize(cmdargs.mincloudsize)
     # Note conversion from percentage
-    fmaskConfig.setEqn17CloudProbThresh(cmdargs.cloudprobthreshold / 100)
+    fmaskConfig.setEqn17CloudProbThresh(float(cmdargs.cloudprobthreshold) / 100)
     fmaskConfig.setEqn20NirSnowThresh(cmdargs.nirsnowthreshold)
     fmaskConfig.setEqn20GreenSnowThresh(cmdargs.greensnowthreshold)
 
