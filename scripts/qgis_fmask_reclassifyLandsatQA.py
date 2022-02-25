@@ -31,9 +31,8 @@ _filled_fmask = 255
     optional=False,
 )
 @alg.input(
-    type=alg.RASTER_LAYER_DEST,
-    name="outputFile",
-    label="Reclassified output image")
+    type=alg.RASTER_LAYER_DEST, name="outputFile", label="Reclassified output image"
+)
 def reclassifyLandsatQa(instance, parameters, context, feedback, inputs):
     """Reclassify Landsat QA_PIXEL image to Fmask classes"""
 
@@ -55,13 +54,15 @@ def reclassifyLandsatQa(instance, parameters, context, feedback, inputs):
     fmaskClassRaster[check_bit_flag(qaRaster, 14)] = _cloud_fmask
     fmaskClassRaster[check_bit_flag(qaRaster, 16)] = _cloud_shadow_fmask
     fmaskClassRaster[check_bit_flag(qaRaster, 32)] = _snow_fmask
-    drv = gdal.GetDriverByName('GTiff')
+    drv = gdal.GetDriverByName("GTiff")
     outputFile = instance.parameterAsFileOutput(parameters, "outputFile", context)
-    outTif = drv.Create(outputFile,
-                        qaRasterImage.RasterXSize,
-                        qaRasterImage.RasterYSize,
-                        1,
-                        gdal.GDT_Int16)
+    outTif = drv.Create(
+        outputFile,
+        qaRasterImage.RasterXSize,
+        qaRasterImage.RasterYSize,
+        1,
+        gdal.GDT_Int16,
+    )
     outTif.SetProjection(qaRasterImage.GetProjection())
     outTif.SetGeoTransform(qaRasterImage.GetGeoTransform())
     outTif.GetRasterBand(1).WriteArray(fmaskClassRaster)
