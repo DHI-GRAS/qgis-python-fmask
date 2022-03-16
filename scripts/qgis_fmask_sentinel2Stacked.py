@@ -23,7 +23,7 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 )
 @alg.input(
     type=alg.FILE,
-    name="granuledir",
+    name="safedir",
     label="Path to .SAFE or tile/granule directory",
     behavior=1,
     optional=False,
@@ -90,7 +90,7 @@ from qgis_fmask.interfaces.s2meta import find_xml_in_granule_dir
 @redirect_stdout_to_feedback
 def fmasksentinel2(instance, parameters, context, feedback, inputs):
     """fmasksentinel2"""
-    granuledir = instance.parameterAsString(parameters, "granuledir", context)
+    safedir = instance.parameterAsString(parameters, "safedir", context)
     anglesfile = instance.parameterAsString(parameters, "anglesfile", context)
     output = instance.parameterAsString(parameters, "output", context)
     verbose = instance.parameterAsBool(parameters, "verbose", context)
@@ -110,26 +110,21 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
     greensnowthreshold = instance.parameterAsDouble(
         parameters, "greensnowthreshold", context
     )
-    if granuledir.endswith(".SAFE"):
-        safedir = granuledir
-    else:
-        safedir = None
 
     tempdir = tempfile.mkdtemp()
     try:
         feedback.pushConsoleInfo("Creating Sentinel 2 band stack VRT file ...")
         tempvrt = os.path.join(tempdir, "temp.vrt")
-        create_sentinel_stack(granuledir, outfile=tempvrt)
+        create_sentinel_stack(safedir, outfile=tempvrt)
         feedback.pushConsoleInfo("Done.")
 
         if not anglesfile:
             feedback.pushConsoleInfo("Creating angles file ...")
             anglesfile = os.path.join(tempdir, "angles.img")
             cmdargs_angles = Namespace(
-                infile=find_xml_in_granule_dir(granuledir), outfile=anglesfile
+                infile=find_xml_in_granule_dir(safedir), outfile=anglesfile
             )
             import numpy as np
-
             with np.errstate(invalid="ignore"):
                 mainRoutine_angles(cmdargs_angles)
             feedback.pushConsoleInfo("Done.")
@@ -141,7 +136,6 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
             verbose=verbose,
             tempdir=tempdir,
             safedir=safedir,
-            granuledir=granuledir,
             keepintermediates=False,
             mincloudsize=mincloudsize,
             cloudbufferdistance=cloudbufferdistance,
@@ -149,6 +143,7 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
             cloudprobthreshold=cloudprobthreshold,
             nirsnowthreshold=nirsnowthreshold,
             greensnowthreshold=greensnowthreshold,
+            parallaxtest=True
         )
 
         feedback.pushConsoleInfo("Running FMask (this may take a while) ...")

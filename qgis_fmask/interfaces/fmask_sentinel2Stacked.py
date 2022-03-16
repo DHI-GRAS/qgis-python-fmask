@@ -97,6 +97,7 @@ def mainRoutine(cmdargs):
     fmaskConfig.setEqn17CloudProbThresh(float(cmdargs.cloudprobthreshold) / 100)
     fmaskConfig.setEqn20NirSnowThresh(cmdargs.nirsnowthreshold)
     fmaskConfig.setEqn20GreenSnowThresh(cmdargs.greensnowthreshold)
+    fmaskConfig.setSen2displacementTest(cmdargs.parallaxtest)
 
     # Work out a suitable buffer size, in pixels, dependent on the resolution of the input TOA image
     toaImgInfo = fileinfo.ImageInfo(cmdargs.toa)
