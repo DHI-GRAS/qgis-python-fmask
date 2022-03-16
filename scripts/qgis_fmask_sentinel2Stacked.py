@@ -125,6 +125,7 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
                 infile=find_xml_in_granule_dir(safedir), outfile=anglesfile
             )
             import numpy as np
+
             with np.errstate(invalid="ignore"):
                 mainRoutine_angles(cmdargs_angles)
             feedback.pushConsoleInfo("Done.")
@@ -143,7 +144,7 @@ def fmasksentinel2(instance, parameters, context, feedback, inputs):
             cloudprobthreshold=cloudprobthreshold,
             nirsnowthreshold=nirsnowthreshold,
             greensnowthreshold=greensnowthreshold,
-            parallaxtest=True
+            parallaxtest=True,
         )
 
         feedback.pushConsoleInfo("Running FMask (this may take a while) ...")

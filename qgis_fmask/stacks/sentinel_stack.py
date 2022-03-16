@@ -9,6 +9,7 @@ import buildvrt as bv
 
 from fmask.cmdline import sentinel2Stacked
 
+
 def recursive_glob(rootdir, pattern="*"):
     matches = []
     for root, _, filenames in os.walk(os.path.join(rootdir, "IMG_DATA")):
