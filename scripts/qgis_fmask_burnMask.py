@@ -21,7 +21,7 @@ from qgis import processing
 @alg.input(
     type=alg.RASTER_LAYER,
     name="maskFile",
-    label="Could mask from FMask",
+    label="Cloud mask from FMask",
     optional=False,
 )
 @alg.input(
