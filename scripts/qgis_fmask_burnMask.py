@@ -120,7 +120,7 @@ def burncloudmask(instance, parameters, context, feedback, inputs):
     # Then use OTB band maths on all bands
     params = {
         "il": [
-            instance.parameterAsString(parameters, "dataFile", context),
+            dataRaster.source(),
             reclassMask,
         ],
         "exp": "im1*im2b1",
